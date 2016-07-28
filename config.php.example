@@ -1,0 +1,9 @@
+<?php
+
+/* Rename this to config.php
+ */
+
+return [
+	// Snapshot older then `expiry` seconds will be deleted
+	'expiry' => 604800,
+];
