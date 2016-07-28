@@ -113,6 +113,14 @@ function printSnapshots($snapshots) {
  * Main entry point of this backup script.
  */
 function main() {
+	global $config;
+
+	require realpath(__DIR__.'/Logger.php');
+	$logger = new Logger();
+	$logger->setRecipients($config['log']['recipients']);
+	$logger->startLogging();
+	$logger->handleError();
+
 	// Load credentials
 	$credentials = include realpath(__DIR__.'/credentials.php');
 
@@ -140,6 +148,9 @@ function main() {
 
 		deleteExpiredSnapshots($result->get('Snapshots'), $client);
 	}
+
+	$logger->sendLog();
+	$logger->endLogging();
 }
 
 // Let's start the party

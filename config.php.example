@@ -6,4 +6,10 @@
 return [
 	// Snapshot older then `expiry` seconds will be deleted
 	'expiry' => 604800,
+
+    // This configuration is optional. If set, log will be sent to list of
+    // `recipients` email addresses
+    'log' => [
+		'recipients' => [],
+	],
 ];
