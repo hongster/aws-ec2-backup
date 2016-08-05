@@ -147,6 +147,7 @@ function main() {
 		}
 
 		deleteExpiredSnapshots($result->get('Snapshots'), $client);
+		echo "\n";
 	}
 
 	$logger->sendLog();
