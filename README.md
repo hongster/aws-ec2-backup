@@ -13,17 +13,16 @@ php index.php
 
 # Setup Instruction
 
-Rename *config.php.example* to *config.php*. Set expiry time (in seconds) for snapshot. Snapshots older than this time will be deleted. The default is 604800s (7 days). If all snapshots have expired, the latest copy will be preserved.
-
-Log can be send to list of email address specified in `log.recipients` in config file. If not email address is specified, log will be sent to STDOUT.
+Rename *config.php.example* to *config.php*. Log can be send to list of email address specified in `log.recipients` in config file. If no email address specified, log will be sent to STDOUT.
 
 Rename *credentials.php.example* to *credentials.php*. Create an entry for each [volume](http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSVolumes.html) you want to create snapshot for. In each entry, define
 
 * A name for each entry. This name will be used to name the created snapshot.
 * `key` - Access key ID.
 * `secret` - Access Key secret.
-* `volumeId` - Identifer of volume.
-* `region` - Reference: http://docs.aws.amazon.com/general/latest/gr/rande.html#apigateway_region
+* `volumeId` - Identifier of volume.
+* `days_to_keep` - Number of days to keep snapshots. Default 7.
+* `region` - Default 'ap-southeast-1'. qReference: http://docs.aws.amazon.com/general/latest/gr/rande.html#apigateway_region
 
 Hints
 
