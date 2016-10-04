@@ -22,7 +22,7 @@ Rename *credentials.php.example* to *credentials.php*. Create an entry for each 
 * `secret` - Access Key secret.
 * `volumeId` - Identifier of volume.
 * `days_to_keep` - Number of days to keep snapshots. Default 7.
-* `region` - Default 'ap-southeast-1'. qReference: http://docs.aws.amazon.com/general/latest/gr/rande.html#apigateway_region
+* `region` - Default 'ap-southeast-1'. Reference: http://docs.aws.amazon.com/general/latest/gr/rande.html#apigateway_region
 
 Hints
 
