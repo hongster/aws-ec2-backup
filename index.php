@@ -9,12 +9,13 @@ use Aws\Ec2\Ec2Client;
 $config = include realpath(__DIR__.'/config.php');
 
 /**
- * Delete snaphots older than 7 days. If this is the last backup, it will not
+ * Delete snaphots older than `$daysToKeep` days. If this is the last backup, it will not
  * be deleted.
  * @param array $snapshots
  * @param Aws\Ec2\Ec2Client $client
+ * @param int $daysToKeep Number of days to keep snapshots.
  */
-function deleteExpiredSnapshots($snapshots, $client) {
+function deleteExpiredSnapshots($snapshots, $client, $daysToKeep) {
 	global $config;
 
 	// Latest snapshot first, oldest snapshot last
@@ -23,9 +24,10 @@ function deleteExpiredSnapshots($snapshots, $client) {
 	});
 
 	$now = time();
+	$expiry = $daysToKeep * 86400;
 	for ($i = 0; $i < count($snapshots); $i++) {
 		// Skip those that have not expired yet
-		if ($now - $snapshots[$i]['StartTime']->getTimestamp() < $config['expiry'])
+		if ($now - $snapshots[$i]['StartTime']->getTimestamp() < $expiry)
 			continue;
 
 		if ($i == 0) {
@@ -51,9 +53,9 @@ function createSnapshot($snapshots, $client, $volumeId) {
 	$now = time();
 
 	// Check if there is fresh snapshot
-	// XXX Hardcode 24hr here
+	// XXX Hardcode 24hr (86400s) here, plus 60s delayed-creation allowance
 	foreach ($snapshots as $snapshot) {
-		if ($now - $snapshot['StartTime']->getTimestamp() < 86400) {
+		if ($now - $snapshot['StartTime']->getTimestamp() < 86340) {
 			echo "Skipping snapshot creation, fresh snapshot created at ".$snapshot['StartTime'].".\n";
 			return null;
 		}
@@ -125,6 +127,9 @@ function main() {
 	$credentials = include realpath(__DIR__.'/credentials.php');
 
 	foreach ($credentials as $credentialName => $credential) {
+		// Number of days to keep snaphots
+		$daysToKeep = isset($credential['days_to_keep']) ? $credential['days_to_keep'] : 7;
+
 		echo "Processing {$credentialName}.\n";
 		$client = new Ec2Client([
 			'version' => 'latest',
@@ -146,7 +151,7 @@ function main() {
 			addBackupTag($client, $credentialName, $createdSnapShot);
 		}
 
-		deleteExpiredSnapshots($result->get('Snapshots'), $client);
+		deleteExpiredSnapshots($result->get('Snapshots'), $client, $daysToKeep);
 		echo "\n";
 	}
 
